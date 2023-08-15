@@ -65,9 +65,6 @@ for extracted_file in extracted_files:
 
 print("Data successfully uploaded to Amazon S3.")
 
-import boto3
-import json
-
 s3_client = boto3.client('s3',region_name='ap-south-1',aws_access_key_id="AKIAWK7KZTD6JH7WIOF6",
     aws_secret_access_key="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",
     )
