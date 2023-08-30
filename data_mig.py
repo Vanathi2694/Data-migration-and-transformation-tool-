@@ -37,7 +37,6 @@ with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             extracted_files.append(extracted_file_path)
 
 print("JSON files extracted:", extracted_files)
-
 import boto3
 import json
 
@@ -65,6 +64,9 @@ for extracted_file in extracted_files:
 
 print("Data successfully uploaded to Amazon S3.")
 
+import boto3
+import json
+
 s3_client = boto3.client('s3',region_name='ap-south-1',aws_access_key_id="AKIAWK7KZTD6JH7WIOF6",
     aws_secret_access_key="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",
     )
@@ -80,26 +82,26 @@ response = s3_client.list_objects(Bucket=bucket_name)
 
 for obj in response.get('Contents', []):
     object_key = obj['Key']
-    
+
     response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
     json_content = response['Body'].read().decode('utf-8')
-    
-    
+
+
     data = json.loads(json_content)
-    
-    
+
+
     attribute_map = {}
     for key, value in data.items():
         attribute_map[key] = {
             'S': str(value) if isinstance(value, (str, int, float)) else json.dumps(value)
         }
-    
-    
+
+
     dynamodb_client.put_item(
         TableName=table_name,
         Item=attribute_map
     )
-    
+
     print(f"Uploaded data from {object_key} to DynamoDB")
 
 print("Success")
